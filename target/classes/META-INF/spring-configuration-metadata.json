@@ -1,0 +1,23 @@
+{
+  "groups": [
+    {
+      "name": "jwt.token",
+      "type": "com.pj.database_design.security.jwt.JwtConfigProperties",
+      "sourceType": "com.pj.database_design.security.jwt.JwtConfigProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "jwt.token.secret",
+      "type": "java.lang.String",
+      "sourceType": "com.pj.database_design.security.jwt.JwtConfigProperties"
+    },
+    {
+      "name": "jwt.token.validity",
+      "type": "java.lang.Integer",
+      "sourceType": "com.pj.database_design.security.jwt.JwtConfigProperties",
+      "defaultValue": 0
+    }
+  ],
+  "hints": []
+}
