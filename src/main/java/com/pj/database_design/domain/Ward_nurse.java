@@ -27,7 +27,7 @@ public class Ward_nurse {
     private User user;
 
     private Integer treatmentArea;
-    private Integer patientCount; //实际该病床护士负责的病人数
+    private Integer patientCount=0; //实际该病床护士负责的病人数
 
     //redundancy can be found by sickbed
     @OneToMany(cascade = CascadeType.MERGE, fetch=FetchType.LAZY)

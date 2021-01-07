@@ -35,8 +35,9 @@ public class DatabaseDesignApplication {
             public void run(String... args) throws Exception {
                 // Create authorities if not exist.
                 Authority adminAuthority = getOrCreateAuthority("Doctor", authorityRepository);
-                getOrCreateAuthority("Ward_nurse", authorityRepository);
                 getOrCreateAuthority("Head_nurse", authorityRepository);
+                getOrCreateAuthority("Ward_nurse", authorityRepository);
+                getOrCreateAuthority("Emergency_nurse", authorityRepository);
 
 
                 Set<Authority> authorities=new HashSet<>();
@@ -93,28 +94,12 @@ public class DatabaseDesignApplication {
                     sickbedRepository.save(sickbed1);
 
 
-                String name="chen";
-                for(int i=0;i<20;i++){
+
+
+                String name="wa";
+                for(int i=0;i<3;i++){
                     name+="ha";
-                    Patient p=new Patient(1,name,"male",1,45-i);
-                    p.setLiveState(1);
-                    patientRepository.save(p);
-
-                }
-
-                name="wa";
-                for(int i=0;i<10;i++){
-                    name+="ha";
-                    Patient p=new Patient(2,name,"female",1,45-i);
-                    p.setLiveState(1);
-                    patientRepository.save(p);
-
-                }
-
-                name="la";
-                for(int i=0;i<10;i++){
-                    name+="ha";
-                    Patient p=new Patient(0,name,"female",1,45-i);
+                    Patient p=new Patient(0,name,"female",0,45-i);
                     p.setLiveState(1);
                     patientRepository.save(p);
 
@@ -130,6 +115,7 @@ public class DatabaseDesignApplication {
                 userRepository.save(u1);
                 Ward_nurse ward_nurse=new Ward_nurse(0,u1);
                 ward_nurse.setPatients(patientList);
+                ward_nurse.setPatientCount(3);
                 ward_nurseRepository.save(ward_nurse);
 
                 List<Sickbed> s=sickbedRepository.findByTreatmentArea(0);
@@ -144,6 +130,60 @@ public class DatabaseDesignApplication {
                 userRepository.save(u1);
                 ward_nurseRepository.save(new Ward_nurse(0,u1));
 
+
+                //treatment =1
+                u1=new User("wangsisi",passwordEncoder.encode("wwwww"),34,"female",authorities);
+                userRepository.save(u1);
+                Ward_nurse w1=new Ward_nurse(1,u1);
+
+                s=sickbedRepository.findByTreatmentArea(1);
+                Patient patient=new Patient(1,"xiaoming","male",1,22);
+                patient.setLiveState(1);
+                patientRepository.save(patient);
+
+                Sickbed sickbed=s.get(0);
+
+                sickbed.setPatient(patient);
+                patientList.clear();
+                patientList.add(patient);
+                w1.setPatients(patientList);
+                w1.setPatientCount(1);
+                ward_nurseRepository.save(w1);
+                sickbed.setWardNurse(w1);
+                sickbedRepository.save(sickbed);
+
+
+                //treatment =2
+                u1=new User("chensisi",passwordEncoder.encode("wwwww"),34,"female",authorities);
+                userRepository.save(u1);
+                Ward_nurse w2=new Ward_nurse(2,u1);
+
+                s=sickbedRepository.findByTreatmentArea(2);
+                patient=new Patient(2,"xiaomei","male",2,22);
+                sickbed=s.get(0);
+                patient.setLiveState(1);
+                patientRepository.save(patient);
+
+                sickbed.setPatient(patient);
+                patientList.clear();
+                patientList.add(patient);
+                w2.setPatients(patientList);
+                w2.setPatientCount(w2.getPatientCount()+1);
+                ward_nurseRepository.save(w2);
+                sickbed.setWardNurse(w2);
+                sickbedRepository.save(sickbed);
+
+                //急诊护士
+                authorities.clear();
+                authorities.add(authorityRepository.findByAuthority("Emergency_nurse"));
+                User e=new User("zhangshanshan",passwordEncoder.encode("zhangshanshan"),55,"female",authorities);
+                userRepository.save(e);
+                Emergency_nurse emergency_nurse=new Emergency_nurse(e);
+                emergency_nurseRepository.save(emergency_nurse);
+                e=new User("sunhaoren",passwordEncoder.encode("sssss"),43,"male",authorities);
+                userRepository.save(e);
+                emergency_nurse=new Emergency_nurse(e);
+                emergency_nurseRepository.save(emergency_nurse);
 
 
             }

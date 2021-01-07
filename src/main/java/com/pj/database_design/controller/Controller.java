@@ -150,8 +150,8 @@ public class Controller {
     public ResponseEntity<Map<String, Object>> initialRecord(@RequestBody InitialRecordRequest request) {
         //login
         Map<String, Object> response = new HashMap<>();
-        userService.initialRecord(request.getName(),request.getAge(),request.getGender(),request.getConditionRate());
-        response.put("message","success");
+        String message=userService.initialRecord(request.getName(),request.getAge(),request.getGender(),request.getConditionRate());
+        response.put("message",message);
         return ResponseEntity.ok(response);
     }
 

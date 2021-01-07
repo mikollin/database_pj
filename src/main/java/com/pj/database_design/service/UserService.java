@@ -399,7 +399,7 @@ public class UserService {
 
     }
 
-    public void initialRecord(String name, Integer age, String gender, Integer conditionRate) {
+    public String initialRecord(String name, Integer age, String gender, Integer conditionRate) {
         Patient patient = new Patient();
         patient.setName(name);
         patient.setAge(age);
@@ -447,14 +447,17 @@ public class UserService {
                     newnurse.setPatientCount(newnurse.getPatientCount() + 1);
                     ward_nurseRepository.save(newnurse);
 
+                    return "success";
+
                 } else
                     continue;
 
 
             }
             //都没有空余 改病情评级 不改治疗区域
-
+            return "All busy. The patient is waiting...";
         }
+        return "All busy. The patient is waiting...";
     }
 
 
