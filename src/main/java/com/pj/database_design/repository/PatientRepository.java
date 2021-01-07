@@ -14,4 +14,5 @@ public interface PatientRepository extends CrudRepository<Patient, Long> {
     List<Patient> findByTreatmentArea(Integer area);
     Patient findByPatientId(Long id);
     List<Patient> findByLiveState(Integer live_state);
+    List<Patient> findByIsAllowedDischarged(Integer isAllowDischarged);
 }

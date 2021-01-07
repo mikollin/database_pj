@@ -22,6 +22,7 @@ public class Patient {
     private Integer conditionRate;//轻症0 重症1 危重症2
     private Integer age;
     private Integer liveState; //0康复出院 1在院治疗 2死亡
+    private Integer isAllowedDischarged;//是否允许出院 0不允许 1允许
 
 //    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 //    private Sickbed sickbed;
@@ -30,6 +31,7 @@ public class Patient {
 //    private  List<Nucleic_acid_test> tests = new ArrayList<>();
 
     public Patient() {
+        this.isAllowedDischarged=0;
     }
 
     public Patient(Integer treatmentArea, String name, String gender, Integer conditionRate, Integer age) {
@@ -38,6 +40,7 @@ public class Patient {
         this.name=name;
         this.gender=gender;
         this.conditionRate = conditionRate;
+        this.isAllowedDischarged=0;
     }
 
     //重写equals方法, 最佳实践就是如下这种判断顺序:
@@ -110,6 +113,14 @@ public class Patient {
 
     public void setLiveState(Integer liveState) {
         this.liveState = liveState;
+    }
+
+    public Integer getIsAllowedDischarged() {
+        return isAllowedDischarged;
+    }
+
+    public void setIsAllowedDischarged(Integer isAllowedDischarged) {
+        this.isAllowedDischarged = isAllowedDischarged;
     }
 
 

@@ -28,7 +28,7 @@ public class DatabaseDesignApplication {
     public CommandLineRunner dataLoader(DoctorRepository doctorRepository, Head_nurseRepository head_nurseRepository, Ward_nurseRepository ward_nurseRepository, Emergency_nurseRepository emergency_nurseRepository,
                                         UserRepository userRepository,AuthorityRepository authorityRepository,
                                         PatientRepository patientRepository,SickroomRepository sickroomRepository,SickbedRepository sickbedRepository,
-                                        JwtUserDetailsService jwtUserDetailsService) {
+                                        JwtUserDetailsService jwtUserDetailsService,PasswordEncoder passwordEncoder) {
 
         return new CommandLineRunner() {
             @Override
@@ -38,16 +38,34 @@ public class DatabaseDesignApplication {
                 getOrCreateAuthority("Ward_nurse", authorityRepository);
                 getOrCreateAuthority("Head_nurse", authorityRepository);
 
-                Doctor d1=new Doctor(0,"zhangyi","male","1111111",23);
-                Doctor d2=new Doctor(1,"zhanger","male","222222",34);
-                Doctor d3=new Doctor(2,"zhangsan","female","3333333",45);
+                Set<Authority> authorities=new HashSet<>();
+                authorities.add(authorityRepository.findByAuthority("Doctor"));
+                User u1=new User("zhangyi",passwordEncoder.encode("1111111"),23,"male",authorities);
+                userRepository.save(u1);
+                u1=new User("zhanger",passwordEncoder.encode("2222222"),34,"male",authorities);
+                userRepository.save(u1);
+                u1=new User("zhangsan",passwordEncoder.encode("3333333"),45,"female",authorities);
+                userRepository.save(u1);
+
+
+                Doctor d1=new Doctor(0,"zhangyi","male",passwordEncoder.encode("1111111"),23);
+                Doctor d2=new Doctor(1,"zhanger","male",passwordEncoder.encode("2222222"),34);
+                Doctor d3=new Doctor(2,"zhangsan","female",passwordEncoder.encode("3333333"),45);
                 doctorRepository.save(d1);
                 doctorRepository.save(d2);
                 doctorRepository.save(d3);
 
-                Head_nurse h1=new Head_nurse(0,"wangyi","female","wangyi",56);
-                Head_nurse h2=new Head_nurse(1,"wanger","female","wanger",36);
-                Head_nurse h3=new Head_nurse(2,"wangsan","female","wangsan",46);
+                authorities.remove(0);
+                authorities.add(authorityRepository.findByAuthority("Head_nurse"));
+                u1=new User("wangyi",passwordEncoder.encode("wangyi"),56,"female",authorities);
+                userRepository.save(u1);
+                u1=new User("wanger",passwordEncoder.encode("wanger"),36,"female",authorities);
+                userRepository.save(u1);
+                u1=new User("wangsan",passwordEncoder.encode("wangsan"),46,"female",authorities);
+                userRepository.save(u1);
+                Head_nurse h1=new Head_nurse(0,"wangyi","female",passwordEncoder.encode("wangyi"),56);
+                Head_nurse h2=new Head_nurse(1,"wanger","female",passwordEncoder.encode("wanger"),36);
+                Head_nurse h3=new Head_nurse(2,"wangsan","female",passwordEncoder.encode("wangsan"),46);
                 head_nurseRepository.save(h1);
                 head_nurseRepository.save(h2);
                 head_nurseRepository.save(h3);
@@ -104,7 +122,12 @@ public class DatabaseDesignApplication {
                 List<Patient> list=patientRepository.findByTreatmentArea(0);
                 for(int k=0;k<3;k++)
                     patientList.add(list.get(k));
-                Ward_nurse ward_nurse=new Ward_nurse(0,3,"lisi","male","1111",38);
+
+                authorities.remove(0);
+                authorities.add(authorityRepository.findByAuthority("Ward_nurse"));
+                u1=new User("lisi",passwordEncoder.encode("wwwww"),38,"male",authorities);
+                userRepository.save(u1);
+                Ward_nurse ward_nurse=new Ward_nurse(0,3,"lisi","male",passwordEncoder.encode("wwwww"),38);
                 ward_nurse.setPatients(patientList);
                 ward_nurseRepository.save(ward_nurse);
 
@@ -116,7 +139,9 @@ public class DatabaseDesignApplication {
                     sickbedRepository.save(tmp);
                 }
 
-                ward_nurseRepository.save(new Ward_nurse(0,0,"lisisi","feale","1111",24));
+                u1=new User("lisisi",passwordEncoder.encode("wwwww"),24,"female",authorities);
+                userRepository.save(u1);
+                ward_nurseRepository.save(new Ward_nurse(0,0,"lisisi","female",passwordEncoder.encode("wwwww"),24));
 
 
 

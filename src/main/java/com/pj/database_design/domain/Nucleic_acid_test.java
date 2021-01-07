@@ -27,7 +27,7 @@ public class Nucleic_acid_test implements Comparable<Nucleic_acid_test> {
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private Doctor doctor;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date date;
 
@@ -36,11 +36,12 @@ public class Nucleic_acid_test implements Comparable<Nucleic_acid_test> {
     public Nucleic_acid_test() {
     }
 
-    public Nucleic_acid_test(Integer result, Integer conditionRate, Patient patient, Doctor doctor) {
+    public Nucleic_acid_test(Integer result, Integer conditionRate, Patient patient, Doctor doctor,Date date) {
         this.result=result;
         this.conditionRate = conditionRate;
         this.patient=patient;
         this.doctor=doctor;
+        this.date=date;
     }
 
 

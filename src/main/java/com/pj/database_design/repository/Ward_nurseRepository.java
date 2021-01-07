@@ -14,4 +14,5 @@ import java.util.List;
 public interface Ward_nurseRepository extends CrudRepository<Ward_nurse, Long> {
     List<Ward_nurse> findByTreatmentArea(Integer area);
     Ward_nurse findByWardNurseId(Long id);
+
 }

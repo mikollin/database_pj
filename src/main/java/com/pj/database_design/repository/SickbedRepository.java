@@ -15,4 +15,5 @@ import java.util.List;
 public interface SickbedRepository extends CrudRepository<Sickbed, Long> {
     List<Sickbed> findByPatient(Patient patient);
     List<Sickbed> findByTreatmentArea(Integer treatment_area);
+    List<Sickbed> findByPatientAndTreatmentArea(Patient patient,Integer treatment_area);
 }

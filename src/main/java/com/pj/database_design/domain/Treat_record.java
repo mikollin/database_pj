@@ -30,7 +30,7 @@ public class Treat_record  implements Comparable<Treat_record>{
     private Date date;
 
     private Float temperature;
-    private  String symptom;
+    private String symptom;
     private Integer liveState; //0康复出院 1在院治疗 2死亡
     private Integer result; //0表示核酸阴性  1表示核酸检测阳性
     private Integer conditionRate;//轻症0 重症1 危重症2
