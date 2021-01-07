@@ -1,4 +1,4 @@
-package com.pj.database_design.controller;
+package com.pj.database_design.controller.request;
 
 /**
  * @author zyl

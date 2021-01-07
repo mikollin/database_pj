@@ -108,6 +108,14 @@ public class DatabaseDesignApplication {
                 ward_nurse.setPatients(patientList);
                 ward_nurseRepository.save(ward_nurse);
 
+                List<Sickbed> s=sickbedRepository.findByTreatmentArea(0);
+                for(int k=0;k<3;k++){
+                    Sickbed tmp=s.get(k);
+                    tmp.setPatient(patientList.get(k));
+                    tmp.setWardNurse(ward_nurse);
+                    sickbedRepository.save(tmp);
+                }
+
                 ward_nurseRepository.save(new Ward_nurse(0,0,"lisisi","feale","1111",24));
 
 
