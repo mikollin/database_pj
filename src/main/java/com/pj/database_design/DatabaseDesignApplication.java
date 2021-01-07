@@ -43,7 +43,7 @@ public class DatabaseDesignApplication {
 
                 UserService userService=new UserService(userRepository,authorityRepository,authenticationManager,jwtUserDetailsService,passwordEncoder,doctorRepository,
                         emergency_nurseRepository,head_nurseRepository,nucleic_acid_testRepository,patientRepository,sickbedRepository,ward_nurseRepository,treat_recordRepository,sickroomRepository);
-                userService.initialRecord("lisi",67,"male",0);
+
 /*
                 Set<Authority> authorities=new HashSet<>();
                 authorities.add(authorityRepository.findByAuthority("Doctor"));
