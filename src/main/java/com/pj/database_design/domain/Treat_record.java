@@ -33,7 +33,7 @@ public class Treat_record  implements Comparable<Treat_record>{
     private String symptom;
     private Integer liveState; //0康复出院 1在院治疗 2死亡
     private Integer result; //0表示核酸阴性  1表示核酸检测阳性
-    private Integer conditionRate;//轻症0 重症1 危重症2
+
 
 
     public Treat_record() {
@@ -102,14 +102,6 @@ public class Treat_record  implements Comparable<Treat_record>{
 
     public void setResult(Integer result) {
         this.result = result;
-    }
-
-    public Integer getConditionRate() {
-        return conditionRate;
-    }
-
-    public void setConditionRate(Integer conditionRate) {
-        this.conditionRate = conditionRate;
     }
 
     public Date getDate() {

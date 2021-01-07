@@ -14,6 +14,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -154,16 +156,23 @@ public class UserService {
                 break;
 
         }
+
+        Patient patient = patientRepository.findByPatientId(patientId);
+
+
+
         //检查转入的区域是否有空的病床
         if (sickbedRepository.findByPatientAndTreatmentArea(null, area).size() != 0) {
             System.out.println("has empty beds!");
-            Patient patient = patientRepository.findByPatientId(patientId);
+
 
             List<Ward_nurse> nurses = ward_nurseRepository.findByTreatmentArea(area);
             for (Ward_nurse newnurse : nurses) {
 
                 //检查护士是否有空余
                 if (newnurse.getPatientCount() < max) {
+                    Integer oldArea=patient.getTreatmentArea();
+
                     patient.setConditionRate(area);
                     patient.setTreatmentArea(area);
 
@@ -198,6 +207,14 @@ public class UserService {
                     newnurse.setPatientCount(newnurse.getPatientCount() + 1);
                     ward_nurseRepository.save(newnurse);
 
+                    patientRepository.save(patient);
+
+                    //由于之前的旧床空出来了 看有无 隔离区中患者/病情等级与治疗区域不匹配的患者
+                    //把他们挪入。
+                    translateToRightArea(oldArea);
+
+
+
                     return "newCondition";
                 } else
                     continue;
@@ -206,15 +223,115 @@ public class UserService {
             }
             //都没有空余 改病情评级 不改治疗区域
             patient.setConditionRate(area);
+            patientRepository.save(patient);
             return "oldCondition";
         } else {
-            Patient patient = patientRepository.findByPatientId(patientId);
+
             patient.setConditionRate(area);
+            patientRepository.save(patient);
             return "oldCondition";
         }
 
 
     }
+
+    public void translateToRightArea(Integer area){
+        int max=-1;
+        switch (area) {
+            case 0:
+                max = 3;
+                break;
+            case 1:
+                max = 2;
+                break;
+            case 2:
+                max = 1;
+                break;
+
+        }
+        List<Sickbed> emptyBeds= sickbedRepository.findByPatientAndTreatmentArea(null, area);
+        if(emptyBeds.size()==0){
+            return;
+        }
+        List<Ward_nurse> nurses = ward_nurseRepository.findByTreatmentArea(area);
+        List<Ward_nurse> canTakeNurses=new ArrayList<>();
+        for(Ward_nurse w:nurses){
+            if(w.getPatientCount()<max){
+                canTakeNurses.add(w);
+            }
+        }
+        if(canTakeNurses.size()==0)
+            return;
+
+        int i=0;
+        List<Patient> quarantineAreaPatients=patientRepository.findByTreatmentAreaAndConditionRate(null,area);
+        if(quarantineAreaPatients.size()!=0) {
+            int min=Math.min(Math.min(emptyBeds.size(), canTakeNurses.size()),quarantineAreaPatients.size());
+            for (; i < min ; i++) {
+                Patient patient=quarantineAreaPatients.get(i);
+                Sickbed bed=emptyBeds.get(i);
+                Ward_nurse nurse=canTakeNurses.get(i);
+                patient.setTreatmentArea(area);
+                patientRepository.save(patient);
+                bed.setPatient(patient);
+                bed.setWardNurse(nurse);
+                sickbedRepository.save(bed);
+                nurse.setPatientCount(nurse.getPatientCount()+1);
+                List<Patient> tmp=nurse.getPatients();
+                tmp.add(patient);
+                nurse.setPatients(tmp);
+                ward_nurseRepository.save(nurse);
+
+
+            }
+        }
+
+        if(emptyBeds.size()-i==0||canTakeNurses.size()-i==0)
+            return;
+        else{
+            //说明三个中最小的是隔离区中患者数 即可以进一步选择 治疗区域与病情评级不匹配的患者
+            for (int k=0;k<i;k++){
+                emptyBeds.remove(k);
+                canTakeNurses.remove(k);
+            }
+
+            List<Patient> inconsistentPatients = new ArrayList<>();
+            List<Patient> tmpPatients=  patientRepository.findByConditionRate(area);
+            for(Patient t:tmpPatients){
+                if(!t.getConditionRate().equals(t.getTreatmentArea())){
+                    inconsistentPatients.add(t);
+                }
+            }
+            if(inconsistentPatients.size()==0)
+                return;
+
+            int min=Math.min(Math.min(emptyBeds.size(), canTakeNurses.size()),inconsistentPatients.size());
+            i=0;
+            for (; i < min ; i++) {
+                Patient patient=inconsistentPatients.get(i);
+                Sickbed bed=emptyBeds.get(i);
+                Ward_nurse nurse=canTakeNurses.get(i);
+                patient.setTreatmentArea(area);
+                patientRepository.save(patient);
+                bed.setPatient(patient);
+                bed.setWardNurse(nurse);
+                sickbedRepository.save(bed);
+                nurse.setPatientCount(nurse.getPatientCount()+1);
+                List<Patient> tmp=nurse.getPatients();
+                tmp.add(patient);
+                nurse.setPatients(tmp);
+                ward_nurseRepository.save(nurse);
+
+
+            }
+
+
+        }
+
+
+
+    }
+
 
 
     public List<Patient> findDischargedPatients(String treatment_area) {
@@ -236,7 +353,7 @@ public class UserService {
 
         /*
         如何判断是否可以允许出院
-        List<Patient> patients=patientRepository.findByTreatment_area(area);
+        List<Patient> patients=patientRepository.findByTreatmentArea(area);
 
         List<Patient> results=new ArrayList<>();
         for(Patient p:patients){
@@ -375,24 +492,25 @@ public class UserService {
         else {
             patient.setLiveState(0);
             patientRepository.save(patient);
-            List<Treat_record> records = treat_recordRepository.findByPatient(patient);
-            for (Treat_record r : records) {
-                r.setLiveState(0);
-                treat_recordRepository.save(r);
-            }
+
 
             //挪出空床
+            Integer oldArea=patient.getTreatmentArea();
             Sickbed sickbed = sickbedRepository.findByPatient(patient).get(0);
             sickbed.setPatient(null);
-            sickbedRepository.save(sickbed);
 
             Ward_nurse ward_nurse = sickbed.getWardNurse();
+            sickbed.setWardNurse(null);
+            sickbedRepository.save(sickbed);
+
+
             List<Patient> hasPatients = ward_nurse.getPatients();
             hasPatients.remove(patient);
             ward_nurse.setPatients(hasPatients);
             ward_nurse.setPatientCount(ward_nurse.getPatientCount() - 1);
             ward_nurseRepository.save(ward_nurse);
 
+            translateToRightArea(oldArea);
 
         }
 
@@ -461,6 +579,101 @@ public class UserService {
     }
 
 
+    public void dailyRecord(Long patientId,Long nurseId,Float temperature,String symptom,
+                            Integer result,Integer liveState,Date date){
+        Patient patient=patientRepository.findByPatientId(patientId);
+        Ward_nurse nurse=ward_nurseRepository.findByWardNurseId(nurseId);
+
+        Treat_record record=new Treat_record();
+        record.setPatient(patient);
+        record.setWardNurse(nurse);
+        record.setTemperature(temperature);
+        record.setSymptom(symptom);
+        record.setResult(result);
+        record.setLiveState(liveState);
+        record.setDate(date);
+        treat_recordRepository.save(record);
+
+        //修改病人的状态
+        patient.setLiveState(liveState);
+        Integer oldArea=patient.getTreatmentArea();
+
+        if(patient.getConditionRate()==0&&liveState==1){
+            //如果是轻症患者且在院治疗中 检查是否满足条件可以出院了
+            if(isAllowedToDischarge(patient))
+                patient.setIsAllowedDischarged(1);
+        }
+
+        if(liveState==2){
+            //该患者于今日死亡 相应的病床和护士都空出来
+
+            //挪出空床
+            Sickbed sickbed = sickbedRepository.findByPatient(patient).get(0);
+            sickbed.setPatient(null);
+
+            Ward_nurse ward_nurse = sickbed.getWardNurse();
+            sickbed.setWardNurse(null);
+            sickbedRepository.save(sickbed);
+
+
+            List<Patient> hasPatients = ward_nurse.getPatients();
+            hasPatients.remove(patient);
+            ward_nurse.setPatients(hasPatients);
+            ward_nurse.setPatientCount(ward_nurse.getPatientCount() - 1);
+            ward_nurseRepository.save(ward_nurse);
+
+            translateToRightArea(oldArea);
+        }
+
+
+        patientRepository.save(patient);
+    }
+
+    public boolean isAllowedToDischarge(Patient patient){
+
+
+            List<Treat_record> records=treat_recordRepository.findByPatient(patient);
+
+            Collections.sort(records);
+            System.out.println(records.get(0).getDate());
+            System.out.println(records.get(1).getDate());
+            //每天记录一次 因此按顺序测三次即为连续三天的体温
+            int flag=1;
+            for(int i=0;i<3;i++){
+                Treat_record r=records.get(i);
+                if(r.getTemperature()>=37.3) {
+                    flag=0;
+                    break;
+                }
+            }
+            if(flag==1){
+                //说明连续三天体温小于37.3
+
+                //检查是否连续两次核酸结果为阴性
+                List<Nucleic_acid_test> tests=nucleic_acid_testRepository.findByPatient(patient);
+
+                Collections.sort(records);
+                int flag2=1;
+                for(int i=0;i<2;i++){
+                    Nucleic_acid_test t=tests.get(i);
+                    if(t.getResult()==1) {
+                        flag2=0;
+                        break;
+                    }
+                }
+                if(flag2==1)
+                    return  true;
+            }
+
+            return false;
+    }
+
+
+
+    public List<Patient> getResponsibledPatients(Long nurseId){
+        Ward_nurse ward_nurse=ward_nurseRepository.findByWardNurseId(nurseId);
+        return ward_nurse.getPatients();
+    }
 
 
 

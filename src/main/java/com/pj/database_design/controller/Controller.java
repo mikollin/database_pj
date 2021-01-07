@@ -35,7 +35,7 @@ public class Controller {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest request) {
-        //login
+
         Map<String, Object> response = new HashMap<>();
         String message = userService.login(request.getUsername(), request.getPassword());
         final UserDetails targetUser = jwtUserDetailsService.loadUserByUsername(request.getUsername());
@@ -46,7 +46,7 @@ public class Controller {
 
     @PostMapping("/getPatientsInThisArea")
     public ResponseEntity<Map<String, Object>> getPatientsInThisArea(@RequestBody GetPatientsRequest request) {
-        //login
+
         Map<String, Object> response = new HashMap<>();
         List<Patient> message = userService.getPatients(request.getTreatmentArea());
 
@@ -56,7 +56,7 @@ public class Controller {
 
     @PostMapping("/getHeadNurseInThisArea")
     public ResponseEntity<Map<String, Object>> getHeadNurseInThisArea(@RequestBody GetHeadNursesRequest request) {
-        //login
+
         Map<String, Object> response = new HashMap<>();
         Head_nurse message = userService.getHeadNurses(request.getTreatmentArea());
 
@@ -66,7 +66,7 @@ public class Controller {
 
     @PostMapping("/getNursesInThisArea")
     public ResponseEntity<Map<String, Object>> getNursesInThisArea(@RequestBody GetWardNursesRequest request) {
-        //login
+
         Map<String, Object> response = new HashMap<>();
         List<Ward_nurse> message = userService.getWardNurses(request.getTreatmentArea());
 
@@ -76,7 +76,7 @@ public class Controller {
 
     @PostMapping("/modifyPatientCondition")
     public ResponseEntity<Map<String, Object>> modifyPatientCondition(@RequestBody ModifyPatientConditionRequest request) {
-        //login
+
         Map<String, Object> response = new HashMap<>();
         String message = userService.changePatientsLevel(request.getPatientID(),request.getNewCondition());
 
@@ -88,7 +88,7 @@ public class Controller {
 
     @PostMapping("/toBeDischargedPatients")
     public ResponseEntity<Map<String, Object>> toBeDischargedPatients(@RequestBody FindDischargedPatientsRequest request) {
-        //login
+
         Map<String, Object> response = new HashMap<>();
         List<Patient> patients = userService.findDischargedPatients(request.getTreatmentArea());
 
@@ -98,7 +98,7 @@ public class Controller {
 
     @PostMapping("/getSickbedsInThisArea")
     public ResponseEntity<Map<String, Object>> getSickbedsInThisArea(@RequestBody GetSickbedsRequest request) {
-        //login
+
         Map<String, Object> response = new HashMap<>();
         List<Sickbed> beds = userService.getSickbeds(request.getTreatmentArea());
 
@@ -108,7 +108,7 @@ public class Controller {
 
     @PostMapping("/addNurse")
     public ResponseEntity<Map<String, Object>> addNurse(@RequestBody AddNurseRequest request) {
-        //login
+
         Map<String, Object> response = new HashMap<>();
         userService.addNurse(request.getNurseID(),request.getTreatmentArea());
 
@@ -118,7 +118,7 @@ public class Controller {
 
     @PostMapping("/newNucTest")
     public ResponseEntity<Map<String, Object>> newNucTest(@RequestBody AddNucTestRequest request) {
-        //login
+
         Map<String, Object> response = new HashMap<>();
         userService.addNucTest(request.getPatientId(),request.getDoctorId(),request.getConditionRate(),request.getDate(),request.getResult());
 
@@ -128,7 +128,7 @@ public class Controller {
 
     @PostMapping("/deleteNurse")
     public ResponseEntity<Map<String, Object>> deleteNurse(@RequestBody DeleteNurseRequest request) {
-        //login
+
         Map<String, Object> response = new HashMap<>();
         userService.deleteNurse(request.getNurseID(),request.getTreatmentArea());
 
@@ -138,7 +138,7 @@ public class Controller {
 
     @PostMapping("/allowDischarge")
     public ResponseEntity<Map<String, Object>> allowDischarge(@RequestBody AllowDischargeRequest request) {
-        //login
+
         Map<String, Object> response = new HashMap<>();
         userService.allowDischarge(request.getPatinetId(),request.getDoctorId());
 
@@ -148,22 +148,31 @@ public class Controller {
 
     @PostMapping("/initialRecord")
     public ResponseEntity<Map<String, Object>> initialRecord(@RequestBody InitialRecordRequest request) {
-        //login
+
         Map<String, Object> response = new HashMap<>();
         String message=userService.initialRecord(request.getName(),request.getAge(),request.getGender(),request.getConditionRate());
         response.put("message",message);
         return ResponseEntity.ok(response);
     }
 
-//    @PostMapping("/dailyRecord")
-//    public ResponseEntity<Map<String, Object>> dailyRecord(@RequestBody DailyRecordRequest request) {
-//        //login
-//        Map<String, Object> response = new HashMap<>();
-//        userService.initialRecord(request.getName(),request.getAge(),request.getGender(),request.getConditionRate());
-//        response.put("message","success");
-//        return ResponseEntity.ok(response);
-//    }
+    @PostMapping("/dailyRecord")
+    public ResponseEntity<Map<String, Object>> dailyRecord(@RequestBody DailyRecordRequest request) {
 
+        Map<String, Object> response = new HashMap<>();
+        userService.dailyRecord(request.getPatientId(),request.getNurseId(),request.getTemperature(),request.getSymptom(),request.getResult(),request.getLiveState(),request.getDate());
+        response.put("message","success");
+        return ResponseEntity.ok(response);
+    }
+
+
+    @PostMapping("/getResponsibledPatients")
+    public ResponseEntity<Map<String, Object>> getResponsibledPatients(@RequestBody GetResponsibledPatientsRequest request) {
+
+        Map<String, Object> response = new HashMap<>();
+        List<Patient> patients=userService.getResponsibledPatients(request.getNureseId());
+        response.put("message",patients);
+        return ResponseEntity.ok(response);
+    }
 
 }
 

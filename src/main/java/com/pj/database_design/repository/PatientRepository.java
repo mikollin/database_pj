@@ -1,6 +1,7 @@
 package com.pj.database_design.repository;
 
 import com.pj.database_design.domain.Patient;
+import com.pj.database_design.domain.Sickbed;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,4 +16,6 @@ public interface PatientRepository extends CrudRepository<Patient, Long> {
     Patient findByPatientId(Long id);
     List<Patient> findByLiveState(Integer live_state);
     List<Patient> findByIsAllowedDischarged(Integer isAllowDischarged);
+    List<Patient> findByTreatmentAreaAndConditionRate(Integer treatment_area,Integer conditionRate);
+    List<Patient> findByConditionRate(Integer conditionRate);
 }
