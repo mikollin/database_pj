@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Repository
 public interface Treat_recordRepository extends PagingAndSortingRepository<Treat_record, Long> {
-    List<Treat_record> findByConditionRate(Integer condition );
+
     List<Treat_record> findByPatient(Patient patient);
     Iterable<Treat_record> findByDate(Date date, Sort order);//排序，这里要如何按时间倒序返回  //不能包含筛选条件
 }

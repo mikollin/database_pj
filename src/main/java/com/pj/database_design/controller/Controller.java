@@ -174,6 +174,15 @@ public class Controller {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/modifyInfos")
+    public ResponseEntity<Map<String, Object>> modifyInfos(@RequestBody ModifyInfosRequest request) {
+
+        Map<String, Object> response = new HashMap<>();
+        userService.modifyInfos(request.getUserId(),request.getName(),request.getAge(),request.getGender(),request.getPwd());
+        response.put("message","success");
+        return ResponseEntity.ok(response);
+    }
+
 }
 
 

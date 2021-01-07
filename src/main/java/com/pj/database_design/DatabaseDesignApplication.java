@@ -4,6 +4,7 @@ import com.pj.database_design.domain.*;
 import com.pj.database_design.repository.*;
 
 import com.pj.database_design.service.JwtUserDetailsService;
+import com.pj.database_design.service.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -28,6 +29,7 @@ public class DatabaseDesignApplication {
     public CommandLineRunner dataLoader(DoctorRepository doctorRepository, Head_nurseRepository head_nurseRepository, Ward_nurseRepository ward_nurseRepository, Emergency_nurseRepository emergency_nurseRepository,
                                         UserRepository userRepository,AuthorityRepository authorityRepository,
                                         PatientRepository patientRepository,SickroomRepository sickroomRepository,SickbedRepository sickbedRepository,
+                                        AuthenticationManager authenticationManager,Nucleic_acid_testRepository nucleic_acid_testRepository,Treat_recordRepository treat_recordRepository,
                                         JwtUserDetailsService jwtUserDetailsService,PasswordEncoder passwordEncoder) {
 
         return new CommandLineRunner() {
@@ -39,7 +41,10 @@ public class DatabaseDesignApplication {
                 getOrCreateAuthority("Ward_nurse", authorityRepository);
                 getOrCreateAuthority("Emergency_nurse", authorityRepository);
 
-
+                UserService userService=new UserService(userRepository,authorityRepository,authenticationManager,jwtUserDetailsService,passwordEncoder,doctorRepository,
+                        emergency_nurseRepository,head_nurseRepository,nucleic_acid_testRepository,patientRepository,sickbedRepository,ward_nurseRepository,treat_recordRepository,sickroomRepository);
+                userService.initialRecord("lisi",67,"male",0);
+/*
                 Set<Authority> authorities=new HashSet<>();
                 authorities.add(authorityRepository.findByAuthority("Doctor"));
                 User u1=new User("zhangyi",passwordEncoder.encode("1111111"),23,"male",authorities);
@@ -185,7 +190,7 @@ public class DatabaseDesignApplication {
                 emergency_nurse=new Emergency_nurse(e);
                 emergency_nurseRepository.save(emergency_nurse);
 
-
+*/
             }
 
             private Authority getOrCreateAuthority(String authorityText, AuthorityRepository authorityRepository) {

@@ -524,6 +524,7 @@ public class UserService {
         patient.setLiveState(1);
         patient.setConditionRate(conditionRate);
         patient.setGender(gender);
+        patientRepository.save(patient);
 
         int max = 0;
         switch (conditionRate) {
@@ -544,7 +545,7 @@ public class UserService {
 
             List<Ward_nurse> nurses = ward_nurseRepository.findByTreatmentArea(conditionRate);
             for (Ward_nurse newnurse : nurses) {
-
+                System.out.println(newnurse.getWardNurseId());
                 //检查护士是否有空余
                 if (newnurse.getPatientCount() < max) {
 
@@ -560,11 +561,14 @@ public class UserService {
 
 
                     List<Patient> newpatients = newnurse.getPatients();
+                    System.out.println(newnurse.getPatients());
                     newpatients.add(patient);
                     newnurse.setPatients(newpatients);
                     newnurse.setPatientCount(newnurse.getPatientCount() + 1);
                     ward_nurseRepository.save(newnurse);
+                    patientRepository.save(patient);
 
+                    patientRepository.save(patient);
                     return "success";
 
                 } else
@@ -675,6 +679,14 @@ public class UserService {
         return ward_nurse.getPatients();
     }
 
+    public void modifyInfos(Long userId,String name,Integer age,String gender,String pwd){
+        User user=userRepository.findByUserId(userId);
+        user.setName(name);
+        user.setAge(age);
+        user.setGender(gender);
+        user.setPwd(passwordEncoder.encode(pwd));
+        userRepository.save(user);
+    }
 
 
 }
