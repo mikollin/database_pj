@@ -20,7 +20,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(unique = true)
+
     private String name;
 
     private String gender;
@@ -50,7 +50,7 @@ public class User implements UserDetails {
             return false;
         if (obj == this)
             return true;
-        return this.getUsername().equals(((User) obj).getUsername());
+        return this.getId().equals(((User) obj).getId());
     }
 
     public int hashCode(){

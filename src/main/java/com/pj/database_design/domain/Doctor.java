@@ -17,19 +17,28 @@ public class Doctor {
     private Integer treatment_area;
 
 
-    private String name;
-    private String gender;
-    private String pwd;
-    private Integer age;
+//    private String name;
+//    private String gender;
+//    private String pwd;
+//    private Integer age;
+
+
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    private User user;
 
     public Doctor() {
     }
 
-    public Doctor(Integer treatment_area,String name,String gender,String pwd,Integer age) {
-        this.age=age;
-        this.name=name;
-        this.gender=gender;
-        this.pwd=pwd;
+//    public Doctor(Integer treatment_area,String name,String gender,String pwd,Integer age) {
+////        this.age=age;
+////        this.name=name;
+////        this.gender=gender;
+////        this.pwd=pwd;
+////        this.treatment_area=treatment_area;
+////    }
+
+    public Doctor(Integer treatment_area,User user) {
+        this.user=user;
         this.treatment_area=treatment_area;
     }
 
@@ -57,6 +66,9 @@ public class Doctor {
         this.doctorId = doctorId;
     }
 
+    public User getUser(){return user;}
+
+    public void setUser(User user){this.user=user;}
 
 
     public Integer getTreatment_area() {
@@ -67,35 +79,4 @@ public class Doctor {
         this.treatment_area = treatment_area;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getPwd() {
-        return pwd;
-    }
-
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
 }

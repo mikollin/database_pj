@@ -17,10 +17,14 @@ public class Ward_nurse {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long wardNurseId;
 
-    private String name;
-    private String gender;
-    private String pwd;
-    private Integer age;
+//    private String name;
+//    private String gender;
+//    private String pwd;
+//    private Integer age;
+
+
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    private User user;
 
     private Integer treatmentArea;
     private Integer patientCount; //实际该病床护士负责的病人数
@@ -33,13 +37,10 @@ public class Ward_nurse {
     public Ward_nurse() {
     }
 
-    public Ward_nurse(Integer treatmentArea, Integer patientCount, String name, String gender, String pwd, Integer age) {
-        this.age=age;
-        this.name=name;
-        this.gender=gender;
-        this.pwd=pwd;
+    public Ward_nurse(Integer treatmentArea,User user) {
+        this.user=user;
         this.treatmentArea = treatmentArea;
-        this.patientCount = patientCount;
+
     }
 
     //重写equals方法, 最佳实践就是如下这种判断顺序:
@@ -81,37 +82,6 @@ public class Ward_nurse {
         this.patientCount = patientCount;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getPwd() {
-        return pwd;
-    }
-
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
 
     public List<Patient> getPatients() {
         return patients;
@@ -119,6 +89,14 @@ public class Ward_nurse {
 
     public void setPatients(List<Patient> patients) {
         this.patients = patients;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 //    public List<Sickbed> getSickbeds() {
