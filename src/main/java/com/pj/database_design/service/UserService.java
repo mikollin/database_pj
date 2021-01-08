@@ -265,6 +265,8 @@ public class UserService {
 
                     patientRepository.save(patient);
 
+
+
                     //由于之前的旧床空出来了 看有无 隔离区中患者/病情等级与治疗区域不匹配的患者
                     //把他们挪入。
                     translateToRightArea(oldArea);
@@ -840,6 +842,12 @@ public class UserService {
 
     }
 
+    public List<Patient> getAllPatients(){
+        List<Patient> list=new ArrayList<>();
+        Iterable<Patient> patients=patientRepository.findAll();
+        patients.forEach(single->{list.add(single);});
+       return list;
+    }
 
 
 }

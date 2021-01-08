@@ -223,6 +223,15 @@ public class Controller {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/getAllPatients")
+    public ResponseEntity<Map<String, Object>> getAllPatients(@RequestBody GetAllPatientsRequest request) {
+
+        Map<String, Object> response = new HashMap<>();
+        List<Patient> tests=userService.getAllPatients();
+        response.put("tests",tests);
+        return ResponseEntity.ok(response);
+    }
+
 }
 
 
