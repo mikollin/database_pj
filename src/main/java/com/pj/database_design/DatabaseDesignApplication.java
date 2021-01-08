@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @SpringBootApplication
@@ -44,8 +46,16 @@ public class DatabaseDesignApplication {
                 UserService userService=new UserService(userRepository,authorityRepository,authenticationManager,jwtUserDetailsService,passwordEncoder,doctorRepository,
                         emergency_nurseRepository,head_nurseRepository,nucleic_acid_testRepository,patientRepository,sickbedRepository,ward_nurseRepository,treat_recordRepository,sickroomRepository);
 
-//                userService.addNucTest(24L,8L,0,new Date(System.currentTimeMillis()),1);
-//                userService.addNucTest(24L,8L,0,new Date(4000),1);
+//                DateFormat d4 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");   //定义日期格式
+//                Date date = d4.parse("2021-01-01 19:20:40");
+//                userService.addNucTest(24L,8L,0,d4.parse("2021-01-09 19:20:40"),0);
+//  //              userService.addNucTest(24L,8L,0,new Date(4000),0);
+//                userService.dailyRecord(24L,28L,37.2f,"no",0,1,d4.parse("2021-01-01 19:20:40"));
+//                userService.dailyRecord(24L,28L,37.1f,"no",0,1,d4.parse("2021-01-02 19:20:40"));
+//                userService.dailyRecord(24L,28L,37.2f,"no",0,1,d4.parse("2021-01-03 19:20:40"));
+
+                //System.out.println(userService.isAllowedToDischarge(patientRepository.findByPatientId(24L)));
+
 //                userService.browseNucTests(24L);
 
 /*

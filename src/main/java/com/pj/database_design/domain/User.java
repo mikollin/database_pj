@@ -18,7 +18,7 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long userId;
+    private Long id;
 
 
     private String name;
@@ -50,11 +50,11 @@ public class User implements UserDetails {
             return false;
         if (obj == this)
             return true;
-        return this.getUserId().equals(((User) obj).getUserId());
+        return this.getId().equals(((User) obj).getId());
     }
 
     public int hashCode(){
-        return userId.intValue();//简单原则
+        return id.intValue();//简单原则
     }
 
     @Override
@@ -132,12 +132,12 @@ public class User implements UserDetails {
         this.age = age;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getId() {
+        return id;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setId(Long id) {
+        this.id = id;
     }
 }
 

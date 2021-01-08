@@ -14,10 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -450,6 +447,10 @@ public class UserService {
                 doctorRepository.findByDoctorId(doctorId), date);
         //System.out.println(patientRepository.findByPatientId(patientId).getPatientId());
         nucleic_acid_testRepository.save(test);
+
+        Patient patient=patientRepository.findByPatientId(patientId);
+        if(nucleic_acid_testRepository.findByPatient(patient).size()>=2&&treat_recordRepository.findByPatient(patient).size()>=3&&isAllowedToDischarge(patient))
+            patient.setIsAllowedDischarged(1);
     }
 
     public void deleteNurse(Long nurseId, String treatment_area) {
@@ -586,6 +587,10 @@ public class UserService {
 
     public void dailyRecord(Long patientId,Long nurseId,Float temperature,String symptom,
                             Integer result,Integer liveState,Date date){
+
+        System.out.println("begin");
+
+
         Patient patient=patientRepository.findByPatientId(patientId);
         Ward_nurse nurse=ward_nurseRepository.findByWardNurseId(nurseId);
 
@@ -605,7 +610,7 @@ public class UserService {
 
         if(patient.getConditionRate()==0&&liveState==1){
             //如果是轻症患者且在院治疗中 检查是否满足条件可以出院了
-            if(isAllowedToDischarge(patient))
+            if(nucleic_acid_testRepository.findByPatient(patient).size()>=2&&treat_recordRepository.findByPatient(patient).size()>=3&&isAllowedToDischarge(patient))
                 patient.setIsAllowedDischarged(1);
         }
 
@@ -665,6 +670,7 @@ public class UserService {
                         flag2=0;
                         break;
                     }
+
                 }
                 if(flag2==1)
                     return  true;
@@ -683,7 +689,8 @@ public class UserService {
     public void modifyInfos(Long userId,String name,Integer age,String gender,String pwd){
 
 
-        User user=userRepository.findByUserId(userId);
+        Optional<User> userOp=userRepository.findById(userId);
+        User user=userOp.get();
         user.setName(name);
         user.setAge(age);
         user.setGender(gender);
