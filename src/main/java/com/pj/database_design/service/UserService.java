@@ -446,15 +446,17 @@ public class UserService {
         //两次检测至少间隔24h
         Patient patient=patientRepository.findByPatientId(patientId);
         List<Nucleic_acid_test> tests=nucleic_acid_testRepository.findByPatient(patient);
-        Collections.sort(tests);
-        Nucleic_acid_test recently=tests.get(0);
-        Date last=recently.getDate();
-        long cha=date.getTime()-last.getTime();
-        double interval = cha * 1.0 / (1000 * 60 * 60);
+        System.out.println(date);
+        if(tests.size()!=0) {
+            Collections.sort(tests);
+            Nucleic_acid_test recently = tests.get(0);
+            Date last = recently.getDate();
+            long cha = date.getTime() - last.getTime();
+            double interval = cha * 1.0 / (1000 * 60 * 60);
 
-        if(interval<24)
-            throw new NucTestIntervalException();
-
+            if (interval < 24)
+                throw new NucTestIntervalException();
+        }
 
         Nucleic_acid_test test = new Nucleic_acid_test(result, conditionRate, patientRepository.findByPatientId(patientId),
                 doctorRepository.findByDoctorId(doctorId), date);
