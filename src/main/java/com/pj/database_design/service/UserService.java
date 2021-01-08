@@ -215,6 +215,10 @@ public class UserService {
 
         Patient patient = patientRepository.findByPatientId(patientId);
 
+        if(patient.getIsAllowedDischarged()==1&&area>0) {
+            patient.setIsAllowedDischarged(0);
+            patientRepository.save(patient);
+        }
 
 
         //检查转入的区域是否有空的病床
@@ -720,6 +724,9 @@ public class UserService {
         patient.setLiveState(liveState);
         Integer oldArea=patient.getTreatmentArea();
 
+        if(patient.getIsAllowedDischarged()==1&&(temperature>=37.3||result==1))
+            patient.setIsAllowedDischarged(0);
+
         if(patient.getConditionRate()==0&&liveState==1){
             //如果是轻症患者且在院治疗中 检查是否满足条件可以出院了
             if(nucleic_acid_testRepository.findByPatient(patient).size()>=2&&treat_recordRepository.findByPatient(patient).size()>=3&&isAllowedToDischarge(patient))
@@ -753,6 +760,8 @@ public class UserService {
 
     public boolean isAllowedToDischarge(Patient patient){
 
+        if(patient.getConditionRate()!=0)
+            return false;
 
             List<Treat_record> records=treat_recordRepository.findByPatient(patient);
 
