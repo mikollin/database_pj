@@ -47,6 +47,12 @@ public class DatabaseDesignApplication {
                 UserService userService=new UserService(userRepository,authorityRepository,authenticationManager,jwtUserDetailsService,passwordEncoder,doctorRepository,
                         emergency_nurseRepository,head_nurseRepository,nucleic_acid_testRepository,patientRepository,sickbedRepository,ward_nurseRepository,treat_recordRepository,sickroomRepository,messageRepository);
 
+                String time="2021-01-31T16:00:00.000Z";
+                DateFormat d4 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+                Map<String, Object> response = new HashMap<>();
+
+                userService.addNucTest(24L, 8L, 0, d4.parse(time.replace("Z", " UTC")), 1);
+
 
 /*
                 DateFormat d4 = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", Locale.ENGLISH);
@@ -59,7 +65,7 @@ public class DatabaseDesignApplication {
                 }
 */
 
-               DateFormat d4 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");   //定义日期格式
+ //              DateFormat d4 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");   //定义日期格式
 //                Date date = d4.parse("2021-01-01 19:20:40");
  //              userService.addNucTest(24L,8L,0,d4.parse("2021-01-09 19:20:40"),0);
 //                userService.addNucTest(24L,8L,0,d4.parse("2021-01-07 19:20:40"),0);

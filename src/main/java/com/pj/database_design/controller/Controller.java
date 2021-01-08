@@ -121,14 +121,16 @@ public class Controller {
 
     @PostMapping("/newNucTest")
     public ResponseEntity<Map<String, Object>> newNucTest(@RequestBody AddNucTestRequest request) {
-        DateFormat d4 = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", Locale.ENGLISH);
 
+        //DateFormat d4 = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", Locale.ENGLISH);
+        DateFormat d4 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
         Map<String, Object> response = new HashMap<>();
         try {
-            userService.addNucTest(request.getPatientId(),request.getDoctorId(),request.getConditionRate(),d4.parse(request.getDate()),request.getResult());
+            userService.addNucTest(request.getPatientId(),request.getDoctorId(),request.getConditionRate(),d4.parse(request.getDate().replace("Z"," UTC")),request.getResult());
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
 
         response.put("message","success");
         return ResponseEntity.ok(response);
@@ -166,10 +168,12 @@ public class Controller {
     @PostMapping("/dailyRecord")
     public ResponseEntity<Map<String, Object>> dailyRecord(@RequestBody DailyRecordRequest request) {
 
-        DateFormat d4 = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", Locale.ENGLISH);
+        //DateFormat d4 = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", Locale.ENGLISH);
+        DateFormat d4 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+
         Map<String, Object> response = new HashMap<>();
         try {
-            userService.dailyRecord(request.getPatientId(),request.getNurseId(),request.getTemperature(),request.getSymptom(),request.getResult(),request.getLiveState(),d4.parse(request.getDate()));
+            userService.dailyRecord(request.getPatientId(),request.getNurseId(),request.getTemperature(),request.getSymptom(),request.getResult(),request.getLiveState(),d4.parse(request.getDate().replace("Z"," UTC")));
         } catch (ParseException e) {
             e.printStackTrace();
         }
