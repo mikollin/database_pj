@@ -443,12 +443,25 @@ public class UserService {
     }
 
     public void addNucTest(Long patientId, Long doctorId, Integer conditionRate, Date date, Integer result) {
+        //两次检测至少间隔24h
+        Patient patient=patientRepository.findByPatientId(patientId);
+        List<Nucleic_acid_test> tests=nucleic_acid_testRepository.findByPatient(patient);
+        Collections.sort(tests);
+        Nucleic_acid_test recently=tests.get(0);
+        Date last=recently.getDate();
+        long cha=date.getTime()-last.getTime();
+        double interval = cha * 1.0 / (1000 * 60 * 60);
+
+        if(interval<24)
+            throw new NucTestIntervalException();
+
+
         Nucleic_acid_test test = new Nucleic_acid_test(result, conditionRate, patientRepository.findByPatientId(patientId),
                 doctorRepository.findByDoctorId(doctorId), date);
         //System.out.println(patientRepository.findByPatientId(patientId).getPatientId());
         nucleic_acid_testRepository.save(test);
 
-        Patient patient=patientRepository.findByPatientId(patientId);
+
         if(nucleic_acid_testRepository.findByPatient(patient).size()>=2&&treat_recordRepository.findByPatient(patient).size()>=3&&isAllowedToDischarge(patient))
             patient.setIsAllowedDischarged(1);
     }
@@ -704,8 +717,19 @@ public class UserService {
         List<Nucleic_acid_test> tests=nucleic_acid_testRepository.findByPatient(patient);
 
         Collections.sort(tests);
-        System.out.println("1 "+tests.get(0).getDate());
-        System.out.println("2 "+tests.get(1).getDate());
+        //System.out.println("1 "+tests.get(0).getDate());
+        //System.out.println("2 "+tests.get(1).getDate());
+        return  tests;
+
+    }
+
+    public List<Treat_record> browseTreatRecords(Long patientId){
+        Patient patient=patientRepository.findByPatientId(patientId);
+        List<Treat_record> tests=treat_recordRepository.findByPatient(patient);
+
+        Collections.sort(tests);
+        //System.out.println("1 "+tests.get(0).getDate());
+        //System.out.println("2 "+tests.get(1).getDate());
         return  tests;
 
 

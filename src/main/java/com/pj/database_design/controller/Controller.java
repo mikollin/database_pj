@@ -185,7 +185,16 @@ public class Controller {
 
         Map<String, Object> response = new HashMap<>();
         List<Nucleic_acid_test> tests=userService.browseNucTests(request.getPatientId());
-        response.put("message","success");
+        response.put("tests",tests);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/browseTreatRecords")
+    public ResponseEntity<Map<String, Object>> browseTreatRecords(@RequestBody BrowseTreatRecordsRequest request) {
+
+        Map<String, Object> response = new HashMap<>();
+        List<Treat_record> tests=userService.browseTreatRecords(request.getPatientId());
+        response.put("tests",tests);
         return ResponseEntity.ok(response);
     }
 
