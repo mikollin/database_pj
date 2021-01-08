@@ -448,6 +448,7 @@ public class UserService {
     public void addNucTest(Long patientId, Long doctorId, Integer conditionRate, Date date, Integer result) {
         Nucleic_acid_test test = new Nucleic_acid_test(result, conditionRate, patientRepository.findByPatientId(patientId),
                 doctorRepository.findByDoctorId(doctorId), date);
+        //System.out.println(patientRepository.findByPatientId(patientId).getPatientId());
         nucleic_acid_testRepository.save(test);
     }
 
@@ -680,11 +681,14 @@ public class UserService {
     }
 
     public void modifyInfos(Long userId,String name,Integer age,String gender,String pwd){
+
+
         User user=userRepository.findByUserId(userId);
         user.setName(name);
         user.setAge(age);
         user.setGender(gender);
-        user.setPwd(passwordEncoder.encode(pwd));
+        if(!pwd.equals(user.getPassword()))
+            user.setPwd(passwordEncoder.encode(pwd));
         userRepository.save(user);
     }
 
@@ -693,8 +697,8 @@ public class UserService {
         List<Nucleic_acid_test> tests=nucleic_acid_testRepository.findByPatient(patient);
 
         Collections.sort(tests);
-        System.out.println(tests.get(0).getDate());
-        System.out.println(tests.get(1).getDate());
+        System.out.println("1 "+tests.get(0).getDate());
+        System.out.println("2 "+tests.get(1).getDate());
         return  tests;
 
 
