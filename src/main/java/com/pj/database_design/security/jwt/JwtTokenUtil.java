@@ -4,8 +4,7 @@ package com.pj.database_design.security.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-//import org.springframework.security.core.userdetails.User;
-import com.pj.database_design.domain.User;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +35,6 @@ public class JwtTokenUtil implements Serializable {
         Map<String, Object> claims = new HashMap<>();
         return Jwts.builder().addClaims(claims)
                 .setSubject(user.getUsername())
-                .setId(user.getId().toString())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtConfigProperties.getValidity()))
                 .signWith(SignatureAlgorithm.HS512, jwtConfigProperties.getSecret()).compact();

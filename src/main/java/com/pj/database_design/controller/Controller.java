@@ -34,9 +34,9 @@ public class Controller {
     public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest request) {
 
         Map<String, Object> response = new HashMap<>();
-        String message = userService.login(request.getUsername(), request.getPassword());
+        Long id = userService.login(request.getUsername(), request.getPassword());
         final UserDetails targetUser = jwtUserDetailsService.loadUserByUsername(request.getUsername());
-        response.put("isAllowed:", message);
+        response.put("Id:", id);
         response.put("userDetails", targetUser);
         return ResponseEntity.ok(response);
     }

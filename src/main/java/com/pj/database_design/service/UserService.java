@@ -61,7 +61,7 @@ public class UserService {
         this.treat_recordRepository = treat_recordRepository;
     }
 
-    public String login(String username, String password) {
+    public Long login(String username, String password) {
         final UserDetails targetUser = jwtUserDetailsService.loadUserByUsername(username);
         if (!passwordEncoder.matches(password, targetUser.getPassword())) {
             throw new PasswordErrorException(username);
@@ -74,7 +74,9 @@ public class UserService {
 //
 //        final String token = jwtTokenUtil.generateToken((User) targetUser);
 //        return token;
-        return "Allowed";
+        User user=userRepository.findByName(username);
+
+        return user.getId();
     }
 
     public List<Patient> getPatients(String treatment) {
