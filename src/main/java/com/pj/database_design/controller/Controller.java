@@ -1,10 +1,7 @@
 package com.pj.database_design.controller;
 
 import com.pj.database_design.controller.request.*;
-import com.pj.database_design.domain.Head_nurse;
-import com.pj.database_design.domain.Patient;
-import com.pj.database_design.domain.Sickbed;
-import com.pj.database_design.domain.Ward_nurse;
+import com.pj.database_design.domain.*;
 import com.pj.database_design.service.JwtUserDetailsService;
 import com.pj.database_design.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -179,6 +176,15 @@ public class Controller {
 
         Map<String, Object> response = new HashMap<>();
         userService.modifyInfos(request.getUserId(),request.getName(),request.getAge(),request.getGender(),request.getPwd());
+        response.put("message","success");
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/browseNucTests")
+    public ResponseEntity<Map<String, Object>> browseNucTests(@RequestBody BrowseNucTestsRequest request) {
+
+        Map<String, Object> response = new HashMap<>();
+        List<Nucleic_acid_test> tests=userService.browseNucTests(request.getPatientId());
         response.put("message","success");
         return ResponseEntity.ok(response);
     }

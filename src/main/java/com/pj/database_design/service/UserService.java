@@ -656,7 +656,7 @@ public class UserService {
                 //检查是否连续两次核酸结果为阴性
                 List<Nucleic_acid_test> tests=nucleic_acid_testRepository.findByPatient(patient);
 
-                Collections.sort(records);
+                Collections.sort(tests);
                 int flag2=1;
                 for(int i=0;i<2;i++){
                     Nucleic_acid_test t=tests.get(i);
@@ -686,6 +686,19 @@ public class UserService {
         user.setGender(gender);
         user.setPwd(passwordEncoder.encode(pwd));
         userRepository.save(user);
+    }
+
+    public List<Nucleic_acid_test> browseNucTests(Long patientId){
+        Patient patient=patientRepository.findByPatientId(patientId);
+        List<Nucleic_acid_test> tests=nucleic_acid_testRepository.findByPatient(patient);
+
+        Collections.sort(tests);
+        System.out.println(tests.get(0).getDate());
+        System.out.println(tests.get(1).getDate());
+        return  tests;
+
+
+
     }
 
 
