@@ -36,7 +36,7 @@ public class Controller {
         Map<String, Object> response = new HashMap<>();
         Long id = userService.login(request.getUsername(), request.getPassword());
         final UserDetails targetUser = jwtUserDetailsService.loadUserByUsername(request.getUsername());
-        response.put("Id:", id);
+        response.put("Id", id);
         response.put("userDetails", targetUser);
         return ResponseEntity.ok(response);
     }

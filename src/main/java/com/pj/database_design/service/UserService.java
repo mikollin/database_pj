@@ -449,14 +449,18 @@ public class UserService {
         Patient patient=patientRepository.findByPatientId(patientId);
         List<Nucleic_acid_test> tests=nucleic_acid_testRepository.findByPatient(patient);
         System.out.println(date);
+
         if(tests.size()!=0) {
             Collections.sort(tests);
             Nucleic_acid_test recently = tests.get(0);
             Date last = recently.getDate();
-            long cha = date.getTime() - last.getTime();
-            double interval = cha * 1.0 / (1000 * 60 * 60);
+            System.out.println(recently.getDate());
+            double cha = date.getTime() - last.getTime();
+            double interval = cha * 1.0 / (1000.0 * 60.0 * 60.0);
+            System.out.println(cha);
+            System.out.println(interval);
 
-            if (interval < 24)
+            if (Math.abs(interval) < 24)
                 throw new NucTestIntervalException();
         }
 
