@@ -14,6 +14,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -31,6 +34,7 @@ public class UserService {
     private Ward_nurseRepository ward_nurseRepository;
     private Treat_recordRepository treat_recordRepository;
     private SickroomRepository sickroomRepository;
+    private MessageRepository messageRepository;
 
     private PasswordEncoder passwordEncoder;
 
@@ -43,7 +47,7 @@ public class UserService {
                        PasswordEncoder passwordEncoder,
                        DoctorRepository doctorRepository, Emergency_nurseRepository emergency_nurseRepository, Head_nurseRepository head_nurseRepository,
                        Nucleic_acid_testRepository nucleic_acid_testRepository, PatientRepository patientRepository, SickbedRepository sickbedRepository,
-                       Ward_nurseRepository ward_nurseRepository, Treat_recordRepository treat_recordRepository, SickroomRepository sickroomRepository) {
+                       Ward_nurseRepository ward_nurseRepository, Treat_recordRepository treat_recordRepository, SickroomRepository sickroomRepository,MessageRepository messageRepository) {
         this.userRepository = userRepository;
         this.authorityRepository = authorityRepository;
         this.authenticationManager = authenticationManager;
@@ -59,6 +63,7 @@ public class UserService {
         this.sickbedRepository = sickbedRepository;
         this.ward_nurseRepository = ward_nurseRepository;
         this.treat_recordRepository = treat_recordRepository;
+        this.messageRepository=messageRepository;
     }
 
     public Long login(String username, String password,String authority,String treatmentArea) {
@@ -319,6 +324,7 @@ public class UserService {
         if(quarantineAreaPatients.size()!=0) {
             int min=Math.min(Math.min(emptyBeds.size(), canTakeNurses.size()),quarantineAreaPatients.size());
             for (; i < min ; i++) {
+                //转移隔离区中的病人
                 Patient patient=quarantineAreaPatients.get(i);
                 Sickbed bed=emptyBeds.get(i);
                 Ward_nurse nurse=canTakeNurses.get(i);
@@ -333,7 +339,13 @@ public class UserService {
                 nurse.setPatients(tmp);
                 ward_nurseRepository.save(nurse);
 
-
+                //向转入区域的护士长提示
+                Message m1=new Message(head_nurseRepository.findByTreatmentArea(area).getUser(),area);
+                DateFormat d4 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                m1.setDate(new Date());
+                m1.setPatient(patient);
+                m1.setMessage("the patient whose id is "+patient.getPatientId()+" is now transferred from quarantine area to this treatment area. ");
+                messageRepository.save(m1);
             }
         }
 
@@ -360,6 +372,9 @@ public class UserService {
             i=0;
             for (; i < min ; i++) {
                 Patient patient=inconsistentPatients.get(i);
+
+                Integer oldarea=patient.getTreatmentArea();
+
                 Sickbed bed=emptyBeds.get(i);
                 Ward_nurse nurse=canTakeNurses.get(i);
                 patient.setTreatmentArea(area);
@@ -373,6 +388,28 @@ public class UserService {
                 nurse.setPatients(tmp);
                 ward_nurseRepository.save(nurse);
 
+                //向转入区域的护士长提示
+                Message m1=new Message(head_nurseRepository.findByTreatmentArea(area).getUser(),area);
+                DateFormat d4 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                m1.setDate(new Date());
+                m1.setPatient(patient);
+
+                String old="";
+                switch (oldarea) {
+                    case 0:
+                        old="mild";
+                        break;
+                    case 1:
+                        old="middle";
+                        break;
+                    case 2:
+                        old="severe";
+                        break;
+
+                }
+
+                m1.setMessage("the patient whose id is "+patient.getPatientId()+" is now transferred from "+old+" to this treatment area. ");
+                messageRepository.save(m1);
 
             }
 
@@ -792,9 +829,17 @@ public class UserService {
         //System.out.println("2 "+tests.get(1).getDate());
         return  tests;
 
+    }
 
+
+    public List<Message> getMessages(Long userId){
+        User user=userRepository.findById(userId).get();
+        List<Message> messages=messageRepository.findByUser(user);
+        Collections.sort(messages);
+        return messages;
 
     }
+
 
 
 }

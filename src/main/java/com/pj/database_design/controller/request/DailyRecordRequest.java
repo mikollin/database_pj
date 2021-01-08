@@ -10,7 +10,7 @@ public class DailyRecordRequest {
     private Long patientId;
     private Long nurseId;
 
-    private Date date;
+    private String date;
 
     private Float temperature;
     private String symptom;
@@ -20,7 +20,7 @@ public class DailyRecordRequest {
 
     public DailyRecordRequest(){}
 
-    public DailyRecordRequest(Long patientId,Long nurseId,Date date,Float temperature,String symptom,Integer liveState,Integer result){
+    public DailyRecordRequest(Long patientId,Long nurseId,String date,Float temperature,String symptom,Integer liveState,Integer result){
         this.patientId=patientId;
         this.nurseId=nurseId;
         this.date=date;
@@ -48,13 +48,6 @@ public class DailyRecordRequest {
         this.nurseId = nurseId;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
 
     public Float getTemperature() {
         return temperature;
@@ -88,4 +81,11 @@ public class DailyRecordRequest {
         this.result = result;
     }
 
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 }

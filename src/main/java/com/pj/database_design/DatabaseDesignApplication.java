@@ -14,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -31,7 +32,7 @@ public class DatabaseDesignApplication {
     public CommandLineRunner dataLoader(DoctorRepository doctorRepository, Head_nurseRepository head_nurseRepository, Ward_nurseRepository ward_nurseRepository, Emergency_nurseRepository emergency_nurseRepository,
                                         UserRepository userRepository,AuthorityRepository authorityRepository,
                                         PatientRepository patientRepository,SickroomRepository sickroomRepository,SickbedRepository sickbedRepository,
-                                        AuthenticationManager authenticationManager,Nucleic_acid_testRepository nucleic_acid_testRepository,Treat_recordRepository treat_recordRepository,
+                                        AuthenticationManager authenticationManager,Nucleic_acid_testRepository nucleic_acid_testRepository,Treat_recordRepository treat_recordRepository,MessageRepository messageRepository,
                                         JwtUserDetailsService jwtUserDetailsService,PasswordEncoder passwordEncoder) {
 
         return new CommandLineRunner() {
@@ -44,11 +45,23 @@ public class DatabaseDesignApplication {
                 getOrCreateAuthority("Emergency_nurse", authorityRepository);
 
                 UserService userService=new UserService(userRepository,authorityRepository,authenticationManager,jwtUserDetailsService,passwordEncoder,doctorRepository,
-                        emergency_nurseRepository,head_nurseRepository,nucleic_acid_testRepository,patientRepository,sickbedRepository,ward_nurseRepository,treat_recordRepository,sickroomRepository);
+                        emergency_nurseRepository,head_nurseRepository,nucleic_acid_testRepository,patientRepository,sickbedRepository,ward_nurseRepository,treat_recordRepository,sickroomRepository,messageRepository);
 
-//                DateFormat d4 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");   //定义日期格式
+
+/*
+                DateFormat d4 = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", Locale.ENGLISH);
+                System.out.println(d4.parse("Fri Jan 08 2021 00:00:00 GMT+0800 (中国标准时间)"));
+                Map<String, Object> response = new HashMap<>();
+                try {
+                    userService.addNucTest(24L,8L,0,d4.parse("Fri Jan 08 2021 00:00:00 GMT+0800 (中国标准时间)"),1);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+*/
+
+               DateFormat d4 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");   //定义日期格式
 //                Date date = d4.parse("2021-01-01 19:20:40");
-//               userService.addNucTest(24L,8L,0,d4.parse("2021-01-09 19:20:40"),0);
+ //              userService.addNucTest(24L,8L,0,d4.parse("2021-01-09 19:20:40"),0);
 //                userService.addNucTest(24L,8L,0,d4.parse("2021-01-07 19:20:40"),0);
 //////                userService.dailyRecord(24L,28L,37.2f,"no",0,1,d4.parse("2021-01-01 19:20:40"));
 //                userService.dailyRecord(24L,28L,37.1f,"no",0,1,d4.parse("2021-01-02 19:20:40"));
@@ -204,8 +217,10 @@ public class DatabaseDesignApplication {
                 emergency_nurse=new Emergency_nurse(e);
                 emergency_nurseRepository.save(emergency_nurse);
 
-*/
+ */
             }
+
+
 
             private Authority getOrCreateAuthority(String authorityText, AuthorityRepository authorityRepository) {
                 Authority authority = authorityRepository.findByAuthority(authorityText);

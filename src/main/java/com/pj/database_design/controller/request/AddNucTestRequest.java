@@ -5,13 +5,13 @@ import java.util.Date;
 public class AddNucTestRequest {
     private Long patientId;
     private Long doctorId;
-    private Date date;
+    private String date;
     private Integer result;//0为阴性 1为阳性
     private Integer conditionRate;//轻症0 重症1 危重症2
 
 
     public AddNucTestRequest(){}
-    public AddNucTestRequest(Long patientId,Long doctorId,Date date,Integer result,Integer conditionRate){
+    public AddNucTestRequest(Long patientId,Long doctorId,String date,Integer result,Integer conditionRate){
         this.patientId=patientId;
         this.doctorId=doctorId;
         this.date=date;
@@ -35,14 +35,6 @@ public class AddNucTestRequest {
         this.doctorId = doctorId;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
 
     public Integer getConditionRate() {
         return conditionRate;
@@ -58,5 +50,13 @@ public class AddNucTestRequest {
 
     public void setResult(Integer result) {
         this.result = result;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

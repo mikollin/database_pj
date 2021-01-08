@@ -11,8 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -117,9 +121,14 @@ public class Controller {
 
     @PostMapping("/newNucTest")
     public ResponseEntity<Map<String, Object>> newNucTest(@RequestBody AddNucTestRequest request) {
+        DateFormat d4 = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", Locale.ENGLISH);
 
         Map<String, Object> response = new HashMap<>();
-        userService.addNucTest(request.getPatientId(),request.getDoctorId(),request.getConditionRate(),request.getDate(),request.getResult());
+        try {
+            userService.addNucTest(request.getPatientId(),request.getDoctorId(),request.getConditionRate(),d4.parse(request.getDate()),request.getResult());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         response.put("message","success");
         return ResponseEntity.ok(response);
@@ -157,8 +166,13 @@ public class Controller {
     @PostMapping("/dailyRecord")
     public ResponseEntity<Map<String, Object>> dailyRecord(@RequestBody DailyRecordRequest request) {
 
+        DateFormat d4 = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", Locale.ENGLISH);
         Map<String, Object> response = new HashMap<>();
-        userService.dailyRecord(request.getPatientId(),request.getNurseId(),request.getTemperature(),request.getSymptom(),request.getResult(),request.getLiveState(),request.getDate());
+        try {
+            userService.dailyRecord(request.getPatientId(),request.getNurseId(),request.getTemperature(),request.getSymptom(),request.getResult(),request.getLiveState(),d4.parse(request.getDate()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         response.put("message","success");
         return ResponseEntity.ok(response);
     }
@@ -196,6 +210,15 @@ public class Controller {
 
         Map<String, Object> response = new HashMap<>();
         List<Treat_record> tests=userService.browseTreatRecords(request.getPatientId());
+        response.put("tests",tests);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/getMessages")
+    public ResponseEntity<Map<String, Object>> getMessages(@RequestBody GetMessagesRequest request) {
+
+        Map<String, Object> response = new HashMap<>();
+        List<Message> tests=userService.getMessages(request.getUserId());
         response.put("tests",tests);
         return ResponseEntity.ok(response);
     }
