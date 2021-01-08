@@ -14,7 +14,7 @@ public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long doctorId;
-    private Integer treatment_area;
+    private Integer treatmentArea;
 
 
 //    private String name;
@@ -37,9 +37,9 @@ public class Doctor {
 ////        this.treatment_area=treatment_area;
 ////    }
 
-    public Doctor(Integer treatment_area,User user) {
+    public Doctor(Integer treatmentArea, User user) {
         this.user=user;
-        this.treatment_area=treatment_area;
+        this.treatmentArea = treatmentArea;
     }
 
     //重写equals方法, 最佳实践就是如下这种判断顺序:
@@ -71,12 +71,12 @@ public class Doctor {
     public void setUser(User user){this.user=user;}
 
 
-    public Integer getTreatment_area() {
-        return treatment_area;
+    public Integer getTreatmentArea() {
+        return treatmentArea;
     }
 
-    public void setTreatment_area(Integer treatment_area) {
-        this.treatment_area = treatment_area;
+    public void setTreatmentArea(Integer treatmentArea) {
+        this.treatmentArea = treatmentArea;
     }
 
 }

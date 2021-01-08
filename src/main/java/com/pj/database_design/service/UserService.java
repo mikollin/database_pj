@@ -61,7 +61,45 @@ public class UserService {
         this.treat_recordRepository = treat_recordRepository;
     }
 
-    public Long login(String username, String password) {
+    public Long login(String username, String password,String authority,String treatmentArea) {
+        Integer area ;
+        switch (treatmentArea) {
+            case "mild":
+                area = 0;
+                break;
+            case "middle":
+                area = 1;
+                break;
+            case "severe":
+                area = 2;
+                break;
+            default: area=null;
+
+        }
+        User user=userRepository.findByName(username);
+        String auth=((Authority) user.getAuthorities().iterator().next()).getAuthority();
+        if(!auth.equals(authority))
+            throw new AuthErrorException(authority);
+
+        switch (auth){
+            case "Doctor":
+                if(!doctorRepository.findByUser(user).getTreatmentArea().equals(area)) {
+                    throw new TreatmentAreaException();
+                }
+                break;
+            case "Head_nurse":
+                if(!head_nurseRepository.findByUser(user).getTreatmentArea().equals(area)) {
+                    throw new TreatmentAreaException();
+                }
+                break;
+            case "Ward_nurse":
+                if(!ward_nurseRepository.findByUser(user).getTreatmentArea().equals(area)) {
+                    throw new TreatmentAreaException();
+                }
+                break;
+        }
+
+
         final UserDetails targetUser = jwtUserDetailsService.loadUserByUsername(username);
         if (!passwordEncoder.matches(password, targetUser.getPassword())) {
             throw new PasswordErrorException(username);
@@ -74,9 +112,23 @@ public class UserService {
 //
 //        final String token = jwtTokenUtil.generateToken((User) targetUser);
 //        return token;
-        User user=userRepository.findByName(username);
+
 
         return user.getId();
+    }
+
+    public Long findAuthorityId(String name){
+        User user=userRepository.findByName(name);
+        Authority authority= (Authority) user.getAuthorities().iterator().next();
+        System.out.println(authority.getAuthority());
+        String auth=authority.getAuthority();
+        switch (auth){
+            case "Doctor":return doctorRepository.findByUser(user).getDoctorId();
+            case "Emergency_nurse":return emergency_nurseRepository.findByUser(user).getEmergencyNurseId();
+            case "Head_nurse":return head_nurseRepository.findByUser(user).getHeadNurseId();
+            case "Ward_nurse":return ward_nurseRepository.findByUser(user).getWardNurseId();
+        }
+        return null;
     }
 
     public List<Patient> getPatients(String treatment) {
@@ -505,7 +557,7 @@ public class UserService {
 
     public void allowDischarge(Long patientId, Long doctorId) {
         Doctor doctor = doctorRepository.findByDoctorId(doctorId);
-        if (doctor.getTreatment_area() != 0) {
+        if (doctor.getTreatmentArea() != 0) {
             throw new TreatmentAreaException();
         }
 
