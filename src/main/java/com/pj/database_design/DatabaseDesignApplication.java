@@ -43,8 +43,9 @@ public class DatabaseDesignApplication {
 
                 UserService userService=new UserService(userRepository,authorityRepository,authenticationManager,jwtUserDetailsService,passwordEncoder,doctorRepository,
                         emergency_nurseRepository,head_nurseRepository,nucleic_acid_testRepository,patientRepository,sickbedRepository,ward_nurseRepository,treat_recordRepository,sickroomRepository);
-//
+
 //                userService.addNucTest(45L,8L,0,new Date(System.currentTimeMillis()),1);
+//                userService.addNucTest(45L,8L,0,new Date("20"),1);
 //                userService.browseNucTests()
 
 /*
