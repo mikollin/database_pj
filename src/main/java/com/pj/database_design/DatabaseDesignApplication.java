@@ -47,11 +47,15 @@ public class DatabaseDesignApplication {
                 UserService userService=new UserService(userRepository,authorityRepository,authenticationManager,jwtUserDetailsService,passwordEncoder,doctorRepository,
                         emergency_nurseRepository,head_nurseRepository,nucleic_acid_testRepository,patientRepository,sickbedRepository,ward_nurseRepository,treat_recordRepository,sickroomRepository,messageRepository);
 
-                String time="2021-01-31T16:00:00.000Z";
-                DateFormat d4 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
-                Map<String, Object> response = new HashMap<>();
+//                userService.initialRecord("aaa",75,"male",0);
+//                userService.initialRecord("bbb",55,"female",0);
+                userService.changePatientsLevel(24L,"middle");
 
-                userService.addNucTest(24L, 8L, 0, d4.parse(time.replace("Z", " UTC")), 1);
+
+//                String time="2021-01-31T16:00:00.000Z";
+//                DateFormat d4 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+//
+//                userService.addNucTest(24L, 8L, 0, d4.parse(time.replace("Z", " UTC")), 1);
 
 
 /*

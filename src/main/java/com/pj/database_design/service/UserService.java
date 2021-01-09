@@ -228,9 +228,11 @@ public class UserService {
 
             List<Ward_nurse> nurses = ward_nurseRepository.findByTreatmentArea(area);
             for (Ward_nurse newnurse : nurses) {
-
+                System.out.println("count : "+newnurse.getPatientCount());
                 //检查护士是否有空余
+
                 if (newnurse.getPatientCount() < max) {
+
                     Integer oldArea=patient.getTreatmentArea();
 
                     patient.setConditionRate(area);
@@ -245,15 +247,19 @@ public class UserService {
                     sickbedRepository.save(oldbed);
 
                     List<Patient> newpatients = oldNurse.getPatients();
+                    for(Patient p:newpatients)
+                        System.out.println(p.getPatientId());
                     newpatients.remove(patient);
                     oldNurse.setPatients(newpatients);
+                    for(Patient p:newpatients)
+                        System.out.println(p.getPatientId());
                     int tmp = oldNurse.getPatientCount();
                     tmp--;
                     oldNurse.setPatientCount(tmp);
                     ward_nurseRepository.save(oldNurse);
 
                     //分配床位和护士
-                    List<Sickbed> sickbeds = sickbedRepository.findByPatient(null);
+                    List<Sickbed> sickbeds = sickbedRepository.findByPatientAndTreatmentArea(null, area);
                     //System.out.println(sickbeds.get(0).getSickbedId());
                     Sickbed newbed = sickbeds.get(0);
                     newbed.setPatient(patient);
@@ -668,6 +674,7 @@ public class UserService {
                 if (newnurse.getPatientCount() < max) {
 
                     patient.setTreatmentArea(conditionRate);
+                    patientRepository.save(patient);
 
                     //分配床位和护士
                     List<Sickbed> sickbeds = sickbedRepository.findByPatient(null);
